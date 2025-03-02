@@ -83,25 +83,104 @@ Both approaches follow a structured pipeline for ASL recognition:
 
 This project serves as a foundational step towards making **gesture-based communication more accessible** through AI-driven solutions.
 
-
 ## Approaches
-Here you’ll detail the **two main ways** you tried to solve the problem.
 
-### Approach 1
-- **Methodology**: Briefly describe the overall pipeline (e.g., using a custom model, a particular library, or a specific feature-extraction technique).
-- **Reasoning**: Why you chose this approach initially.
-- **Advantages**: What made it appealing.
-- **Challenges**: What you struggled with or why you moved on to a second approach.
+In developing our ASL detection model, we experimented with **two distinct methodologies** to recognize hand gestures. Each approach had unique strengths and trade-offs, which we carefully evaluated through experimentation.
 
-### Approach 2
-- **Methodology**: How it differs from Approach 1 (e.g., using transfer learning, a different data pipeline, or a more advanced architecture).
-- **Reasoning**: Why you pivoted or experimented with this new approach.
-- **Advantages** and **Challenges**: Summarize learnings.
+---
 
-## Data Collection and Preprocessing
-- Where you sourced data (or how you recorded it).
-- Steps taken to clean or organize it.
-- Tools/libraries used for data preprocessing (e.g., MediaPipe, OpenCV, etc.).
+### **Approach 1: Keypoint-Based Gesture Recognition (Custom Model with MediaPipe)**
+
+#### **Methodology**  
+This approach utilized **Google's MediaPipe library** to extract **21 key hand landmarks** (x, y, z coordinates) from images and video frames. Instead of feeding raw images into a deep learning model, we trained a custom **lightweight neural network** on these extracted keypoints to classify hand gestures. The pipeline involved:
+
+1. **Data Collection & Preprocessing:**
+   - Used **MediaPipe Hands** to extract **x, y, z** coordinates for each of the 21 hand landmarks.
+   - Stored keypoint data as structured numerical datasets for efficient training.
+   - Augmented data using random transformations to improve generalization.
+
+2. **Model Training:**
+   - Built a **fully connected neural network (MLP - Multi-Layer Perceptron)** using TensorFlow/Keras.
+   - Tuned hyperparameters (learning rate, dropout, activation functions).
+   - Trained on extracted keypoint datasets instead of raw images.
+
+3. **Inference & Real-Time Detection:**
+   - MediaPipe continuously extracted keypoints from a webcam feed.
+   - The trained model classified the gesture based on the real-time keypoint data.
+   - Displayed the detected ASL sign with a confidence score.
+
+#### **Reasoning**  
+- **Efficiency:** Since neural networks process numerical inputs much faster than images, this method was expected to be **lightweight** and suitable for **real-time applications**.
+- **Feature Extraction Control:** By focusing on hand landmarks instead of raw pixels, we aimed to reduce the influence of background noise and lighting conditions.
+
+#### **Advantages**
+✔️ **Fast & Efficient** – Processes only **numerical keypoints**, making it computationally lightweight.  
+✔️ **Real-time Ready** – Works well on lower-end hardware, including mobile devices.  
+✔️ **Robust to Background Variations** – Since it uses hand landmarks instead of pixel intensities, it is less affected by lighting or background clutter.  
+
+#### **Challenges**
+❌ **Loss of Contextual Information** – The model only considers hand keypoints and ignores additional visual cues such as motion, orientation, or hand texture.  
+❌ **Limited Accuracy for Complex Gestures** – Some ASL signs require **subtle finger movements or two-hand interactions**, which were harder to capture using keypoints alone.  
+❌ **Struggled with Rotation & Perspective Variability** – The 3D depth estimation from MediaPipe wasn't always accurate, leading to misclassification in certain angles.  
+
+**Why We Moved to the Second Approach?**  
+While this method was promising, it had limitations in recognizing more intricate ASL signs. To improve accuracy, we decided to experiment with a **deep learning-based image classification approach using transfer learning.**
+
+---
+
+### **Approach 2: Transfer Learning on Pre-Trained Deep Learning Models**  
+
+#### **Methodology**  
+This approach took a **traditional deep learning route** by using **pre-trained convolutional neural networks (CNNs)** to classify ASL gestures directly from **raw images** rather than relying on extracted keypoints. The steps involved:
+
+1. **Data Preparation:**
+   - Used a dataset of labeled ASL gesture images.
+   - Applied **data augmentation** (rotation, flipping, contrast changes) to improve generalization.
+
+2. **Feature Extraction with Transfer Learning:**
+   - Experimented with **MobileNetV2, ResNet50, and EfficientNet**, which were pre-trained on **ImageNet**.
+   - Removed the final classification layer and replaced it with a **custom dense layer** for ASL sign recognition.
+
+3. **Fine-Tuning & Training:**
+   - First trained only the custom classification head.
+   - Then fine-tuned some of the deeper CNN layers to adapt them for ASL recognition.
+   - Used a **categorical cross-entropy loss** and **Adam optimizer** for model convergence.
+
+4. **Inference & Deployment:**
+   - Captured real-time webcam frames.
+   - Preprocessed the frames (resized and normalized).
+   - Fed them into the trained CNN model to predict ASL gestures.
+
+#### **Reasoning**  
+- **Higher Accuracy Potential**: CNNs learn richer feature representations directly from images, which allows them to distinguish even subtle variations in ASL gestures.  
+- **Handles Complex Gestures Better**: Unlike keypoints, **full images provide spatial and textural information**, improving recognition of similar-looking gestures.  
+- **Leverages Existing Research**: Instead of training from scratch, we used transfer learning from state-of-the-art **pre-trained models**, reducing computation costs.
+
+#### **Advantages**
+✔️ **Higher Accuracy** – Achieved significantly better performance on complex ASL gestures.  
+✔️ **Better Generalization** – The model learned **robust** visual features that adapted well to different backgrounds and lighting conditions.  
+✔️ **Supports Two-Hand Gestures** – Unlike the keypoint-based approach, this model accurately recognized gestures requiring both hands.
+
+#### **Challenges**
+❌ **Computationally Intensive** – Requires **GPU acceleration** for both training and inference.  
+❌ **Slower Real-Time Processing** – Since entire images are processed instead of just keypoints, it introduces some delay.  
+❌ **Dependent on Background Consistency** – The model can be affected by changes in **lighting, camera angles, or background objects**.
+
+---
+
+### **Key Learnings & Final Observations**
+| Feature | Keypoint-Based (Approach 1) | Transfer Learning (Approach 2) |
+|---------|----------------------------|------------------------------|
+| **Speed** | ✅ Very fast, lightweight | ❌ Slower, requires GPU |
+| **Accuracy** | ❌ Limited for complex signs | ✅ High accuracy on diverse gestures |
+| **Computational Requirements** | ✅ Low (works on CPU) | ❌ High (best on GPU) |
+| **Real-Time Feasibility** | ✅ Works in real-time | ❌ Slight lag in inference |
+| **Handles Two-Hand Gestures** | ❌ Struggles with complex signs | ✅ Works well |
+
+### **Conclusion**
+Both approaches have their strengths and weaknesses. For **real-time, low-power applications**, the **keypoint-based model** is ideal due to its efficiency. However, for **high-accuracy ASL recognition**, the **transfer learning approach** outperforms the keypoint model significantly.  
+
+A potential **hybrid approach**, combining keypoint extraction with deep learning-based feature extraction, may offer the best of both worlds in the future.
 
 ## Model Architectures
 - Detailed explanation of the final model(s) used (e.g., CNN, LSTM, Transformers).
