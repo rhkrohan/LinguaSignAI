@@ -1,22 +1,5 @@
 # American Sign Language Detection Model
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Project Overview](#project-overview)
-3. [Approaches](#approaches)
-   - [Approach 1](#approach-1)
-   - [Approach 2](#approach-2)
-4. [Data Collection and Preprocessing](#data-collection-and-preprocessing)
-5. [Model Architectures](#model-architectures)
-6. [Training Process](#training-process)
-7. [Evaluation and Results](#evaluation-and-results)
-8. [Usage](#usage)
-9. [Future Work](#future-work)
-10. [Contributors](#contributors)
-11. [License](#license)
-
----
-
 ## Introduction
 
 Sign language is a vital communication method for the Deaf and Hard-of-Hearing community. However, the need for interpreters or specialized language training can create communication barriers in everyday interactions. To help address this challenge, our project focuses on building a machine learning-based **American Sign Language (ASL) detection model** that recognizes hand gestures in real time or from recorded video frames.
