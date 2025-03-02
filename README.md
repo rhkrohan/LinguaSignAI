@@ -46,7 +46,7 @@ We explored **two primary approaches** to solving this problem:
 - Features a **custom neural network** trained on the extracted keypoints.  
 - Efficient and lightweight, focusing on the positional relationship between fingers.  
 - Best suited for real-time applications where speed is a priority.  
-- *Notebook Reference:* `HandGestureDataExtraction(MediaPipe).ipynb`
+- *Notebook Reference:* `HandGestureDataExtraction(MediaPipe).ipynb` and `SignLanguageDetectionModel.ipynb`
 
 #### **2️⃣ Transfer Learning on Pre-Trained Models**
 📂 **Directory:** `transfer_learning_model/`  
