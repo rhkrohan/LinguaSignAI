@@ -46,10 +46,60 @@ By combining computer vision-based keypoint extraction and deep learning classif
 
 
 ## Project Overview
-High-level overview of:
-- The motivation behind the project (why it’s important).
-- The general problem you’re solving (ASL sign recognition).
-- The scope of the repository (notebooks, scripts, model weights).
+
+### Objectives  
+The primary objectives of this project are:
+- **Develop a real-time ASL recognition system** that classifies hand gestures efficiently.
+- **Experiment with multiple approaches** to determine the most accurate and scalable method.
+- **Leverage both custom feature extraction and transfer learning** for robust gesture classification.
+- **Contribute to assistive technology** by providing a foundation for ASL recognition applications.
+
+### Methodologies  
+We explored **two primary approaches** to solving this problem:
+
+#### **1️⃣ Keypoint-Based Recognition (Custom Model with MediaPipe)**
+📂 **Directory:** `keypoint_based_recognition/`  
+- Utilizes **Google’s MediaPipe** to extract hand landmarks from video frames.  
+- Features a **custom neural network** trained on the extracted keypoints.  
+- Efficient and lightweight, focusing on the positional relationship between fingers.  
+- Best suited for real-time applications where speed is a priority.  
+- *Notebook Reference:* `HandGestureDataExtraction(MediaPipe).ipynb`
+
+#### **2️⃣ Transfer Learning on Pre-Trained Models**
+📂 **Directory:** `transfer_learning_model/`  
+- Leverages pre-trained deep learning models (e.g., **MobileNet, ResNet, EfficientNet**) to extract rich visual features.  
+- Works directly with **raw images/videos** instead of relying on keypoints.  
+- More computationally intensive but **achieves higher accuracy** in classification.  
+- Best suited for offline processing or high-performance applications.  
+- *Notebook Reference:* `TransferLearningModel.ipynb`
+
+### System Pipeline  
+Both approaches follow a structured pipeline for ASL recognition:
+
+1. **Data Collection & Preprocessing:**  
+   - Raw image/video collection or keypoint extraction using MediaPipe.
+   - Data augmentation for increased model generalization.
+
+2. **Model Training & Evaluation:**  
+   - Training neural networks for both keypoint-based and image-based models.
+   - Hyperparameter tuning and performance optimization.
+
+3. **Real-Time or Batch Inference:**  
+   - Implementing real-time detection for keypoint models.
+   - Running batch predictions for transfer learning models.
+
+### Results & Findings  
+- The **keypoint-based model** was lightweight and performed well in real-time scenarios but struggled with complex gestures.  
+- The **transfer learning model** achieved **higher accuracy** due to richer feature extraction but required more computational power.  
+- A **hybrid approach**, combining keypoint tracking with deep feature extraction, may offer the best balance between speed and accuracy.
+
+### Future Scope  
+- **Expand gesture vocabulary** to recognize a broader range of ASL signs.  
+- **Improve model generalization** across different lighting conditions and backgrounds.  
+- **Optimize for edge devices** to enable real-time processing on mobile phones or embedded systems.  
+
+This project serves as a foundational step towards making **gesture-based communication more accessible** through AI-driven solutions.
+
 
 ## Approaches
 Here you’ll detail the **two main ways** you tried to solve the problem.
