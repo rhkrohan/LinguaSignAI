@@ -181,32 +181,109 @@ This approach took a **traditional deep learning route** by using **pre-trained 
 Both approaches have their strengths and weaknesses. For **real-time, low-power applications**, the **keypoint-based model** is ideal due to its efficiency. However, for **high-accuracy ASL recognition**, the **transfer learning approach** outperforms the keypoint model significantly.  
 
 A potential **hybrid approach**, combining keypoint extraction with deep learning-based feature extraction, may offer the best of both worlds in the future.
-
 ## Model Architectures
-- Detailed explanation of the final model(s) used (e.g., CNN, LSTM, Transformers).
-- Key hyperparameters (layers, activation functions, learning rates).
+
+This project explored two different model architectures:  
+
+### **1️⃣ Keypoint-Based Model (MLP - Multi-Layer Perceptron)**
+- A fully connected **neural network (MLP)** trained on **hand landmark coordinates** extracted using **MediaPipe**.
+- The model takes **21 hand landmarks** (x, y, z coordinates) as input and classifies them into ASL gestures.
+
+**Architecture Details:**
+- **Input Layer:** 63 features (21 landmarks × 3 coordinates)
+- **Hidden Layers:** 3 dense layers with **ReLU activation**
+- **Output Layer:** Softmax activation for **multi-class classification**
+- **Loss Function:** Categorical Cross-Entropy
+- **Optimizer:** Adam
+- **Learning Rate:** 0.001
+
+---
+
+### **2️⃣ Transfer Learning Model (CNN-based Pre-trained Network)**
+- We fine-tuned **MobileNetV2, ResNet50, and EfficientNet** for ASL sign recognition.
+- These models were pre-trained on **ImageNet** and adapted to classify ASL gestures.
+
+**Architecture Details:**
+- **Base Model:** Pre-trained CNN (e.g., MobileNetV2)
+- **Feature Extractor:** Convolutional layers frozen, only fine-tuning later layers
+- **Classification Head:**  
+  - **Global Average Pooling Layer**
+  - **Dense (256 neurons, ReLU)**
+  - **Dropout (0.5)**
+  - **Dense (Number of classes, Softmax)**
+- **Loss Function:** Categorical Cross-Entropy
+- **Optimizer:** Adam
+- **Learning Rate:** 0.0001 (fine-tuned)
+
+---
 
 ## Training Process
-- Hardware and software environment.
-- Epochs, batch size, training time.
-- Any data augmentation or regularization steps used.
+
+### **Hardware & Software Environment**
+- **Training Platform:** Google Colab Pro  
+- **GPU Used:** NVIDIA A100  
+- **CPU:** Google Colab’s default vCPU  
+- **RAM:** 25GB (Google Colab Pro)  
+- **Frameworks:** TensorFlow, Keras, OpenCV, MediaPipe  
+- **OS:** Ubuntu (Colab VM)  
+
+### **Training Hyperparameters**
+| Parameter | Keypoint Model (MLP) | Transfer Learning (CNN) |
+|-----------|----------------------|------------------------|
+| **Epochs** | 100 | 50 |
+| **Batch Size** | 32 | 16 |
+| **Learning Rate** | 0.001 | 0.0001 |
+| **Optimizer** | Adam | Adam |
+| **Loss Function** | Categorical Cross-Entropy | Categorical Cross-Entropy |
+| **Training Time** | ~40 minutes | **4 hours 30 minutes** |
+
+### **Training Details**
+- **Keypoint-Based Model (MLP)**
+  - Trained in **~40 minutes** using Google Colab’s default **vCPU & RAM**.
+  - Faster due to the **low-dimensional numerical input** from extracted hand keypoints.
+  - Did not require GPU acceleration, as the dataset size was small.
+
+- **Transfer Learning Model (CNN)**
+  - **Trained for 4 hours 30 minutes** using **NVIDIA A100 GPU** on Google Colab Pro.
+  - Fine-tuned **MobileNetV2, ResNet50, and EfficientNet**.
+  - Required **high memory and computational power** due to image-based training.
+
+### **Data Augmentation**
+To enhance generalization, we applied **data augmentation**:
+
+- **For Keypoint-Based Model** (Numerical Data):
+  - **Random Rotations**: Simulated different hand orientations.
+  - **Scaling Variations**: Adjusted distances between fingers.
+
+- **For Transfer Learning Model** (Image-Based):
+  - **Random Rotation:** ±30 degrees
+  - **Random Scaling:** 10%-20%
+  - **Color Jittering:** Brightness & contrast adjustments
+  - **Horizontal Flipping:** Mirror image gestures for better generalization
+
+---
 
 ## Evaluation and Results
-- Metrics (accuracy, F1-score, confusion matrix).
-- Comparison of the two approaches if relevant.
-- Example outputs or visualizations.
 
-## Usage
-- Instructions to install dependencies, set up environment, run the notebooks or scripts.
-- Example command lines.
+### **Model Performance Metrics**
+We evaluated both models using **Accuracy, Precision, Recall, and F1-score**.  
 
-## Future Work
-- Plans for expanding, refining, or deploying the system.
-- Possible improvements or additional features.
+| Model | Accuracy | Precision | Recall | F1-Score |
+|--------|----------|------------|--------|-----------|
+| Keypoint-Based (MLP) | 82.4% | 79.2% | 80.6% | 79.9% |
+| Transfer Learning (CNN) | 94.7% | 93.5% | 95.1% | 94.3% |
 
-## Contributors
-- List or mention everyone who contributed significantly, along with their roles or specific contributions.
+- **Confusion Matrix**  
+  - The keypoint-based model misclassified similar gestures due to the lack of visual features.  
+  - The CNN-based model performed significantly better due to richer feature extraction.  
 
-## License
-- State your chosen license (e.g., MIT, Apache 2.0) and link to the `LICENSE` file if present.
+### **Visualizations**
+- **Loss vs. Epochs**: CNN-based models showed **faster convergence**.
+- **Confusion Matrix**: Transfer learning significantly reduced misclassifications.
+- **Sample Predictions**:
+  - ✅ **Correct Predictions:** "Hello," "Thank You," "I Love You"
+  - ❌ **Misclassified:** Complex gestures requiring both hands.
+
+---
+
 
