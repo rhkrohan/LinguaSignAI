@@ -1,4 +1,4 @@
-# ASL Detection Model
+# American Sign Language Detection Model
 
 ## Table of Contents
 1. [Introduction](#introduction)
