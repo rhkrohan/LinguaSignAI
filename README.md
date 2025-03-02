@@ -41,7 +41,7 @@ The primary objectives of this project are:
 We explored **two primary approaches** to solving this problem:
 
 #### **1️⃣ Keypoint-Based Recognition (Custom Model with MediaPipe)**
-📂 **Directory:** `keypoint_based_recognition/`  
+📂 **Directory:** `hand_landmark_model/`  
 - Utilizes **Google’s MediaPipe** to extract hand landmarks from video frames.  
 - Features a **custom neural network** trained on the extracted keypoints.  
 - Efficient and lightweight, focusing on the positional relationship between fingers.  
